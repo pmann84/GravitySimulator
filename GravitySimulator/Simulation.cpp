@@ -121,7 +121,7 @@ void CSimulation::Draw(sf::RenderWindow& window)
          //sf::CircleShape shape(static_cast<float>(b.Radius()));
          sf::CircleShape shape(static_cast<float>(1.0));
          shape.setFillColor(sf::Color::Yellow);
-         auto screenCoords = GetWindowCoordinates(window, b.Position());
+         auto screenCoords = toSfVector2(b.Position());
          // Draw at the centre
          shape.setPosition(static_cast<float>(screenCoords.x), static_cast<float>(screenCoords.y));
          // adjust for radius of circle
@@ -133,10 +133,8 @@ void CSimulation::Draw(sf::RenderWindow& window)
    }
 }
 
-sf::Vector2f CSimulation::GetWindowCoordinates(const sf::RenderWindow& window, CVector2 coord)
+sf::Vector2f CSimulation::toSfVector2(CVector2 coord)
 {
-   double centreX = window.getSize().x / 2.0;
-   double centreY = window.getSize().y / 2.0;
-   return sf::Vector2f(static_cast<float>(centreX+coord.x()), 
-                       static_cast<float>(centreY+coord.y()));
+   return sf::Vector2f(static_cast<float>(coord.x()), 
+                       static_cast<float>(coord.y()));
 }

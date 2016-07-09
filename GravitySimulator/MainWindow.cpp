@@ -69,6 +69,14 @@ bool CMainWindow::Run()
                m_sim.Reset();
             }
          }
+         else if (event.type == sf::Event::MouseButtonPressed)
+         {
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+               std::cout << "mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+               m_sim.AddBody(1.0, 1.0, CVector2(event.mouseButton.x, event.mouseButton.y));
+            }
+         }
          else if (event.type == sf::Event::Resized)
          {
             OnResize();
@@ -83,10 +91,10 @@ bool CMainWindow::Run()
 void CMainWindow::SetupSim()
 {
    // Add first body
-   m_sim.AddBody(500.0, 50.0);
+   m_sim.AddBody(500.0, 50.0, CVector2(400.0, 300.0));
 
    // Add second body
-   m_sim.AddBody(1.0, 2.0, CVector2(150.0, 0.0), CVector2(0.0, 2.0));
+   m_sim.AddBody(1.0, 2.0, CVector2(400.0 + 150.0, 300.0), CVector2(0.0, 2.0));
    // Add third body
    //m_sim.AddBody(0.5, 0.01, CVector2(200, 0.0), CVector2(0.0, 3.0));
 }

@@ -38,7 +38,7 @@ private:
    unsigned int m_nextId;
 
    void AddBody(CBody& body);
-   sf::Vector2f GetWindowCoordinates(const sf::RenderWindow& window, CVector2 coord);
+   sf::Vector2f toSfVector2(CVector2 coord);
 };
 
 #endif
