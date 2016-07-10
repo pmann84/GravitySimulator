@@ -66,8 +66,8 @@ void CSimulation::Update()
                   // Calculate the contribution of the force between the two bodies
                   //std::cout << "\tAdding force contribution from Body " << forceFromBody.Id() << std::endl;
                   auto distVector = forceFromBody.Position() - body.Position();
-                  auto distMag = distVector.Magnitude()*distVector.Magnitude()*distVector.Magnitude();
-                  auto forceAdd = CVector2((forceFromBody.Mass()*distVector.x()) / distMag, (forceFromBody.Mass()*distVector.y()) / distMag);
+                  auto distMag = distVector.Norm()*distVector.Norm()*distVector.Norm();
+                  auto forceAdd = CVector2({ (forceFromBody.Mass()*distVector[0]) / distMag, (forceFromBody.Mass()*distVector[1]) / distMag });
                   force_agg += forceAdd;
                }
             }
@@ -135,6 +135,6 @@ void CSimulation::Draw(sf::RenderWindow& window)
 
 sf::Vector2f CSimulation::toSfVector2(CVector2 coord)
 {
-   return sf::Vector2f(static_cast<float>(coord.x()), 
-                       static_cast<float>(coord.y()));
+   return sf::Vector2f(static_cast<float>(coord[0]), 
+                       static_cast<float>(coord[1]));
 }

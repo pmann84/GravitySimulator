@@ -1,7 +1,7 @@
 ﻿#ifndef __BODY_H__
 #define __BODY_H__
 
-#include "Vector2.h"
+#include "Vector.h"
 
 class CBody
 {

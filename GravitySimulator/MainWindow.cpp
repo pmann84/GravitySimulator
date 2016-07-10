@@ -29,7 +29,6 @@ bool CMainWindow::Init()
 
 bool CMainWindow::Draw()
 {
-   
    m_window.clear(sf::Color::Black);
    m_sim.Draw(m_window);
 
@@ -73,8 +72,21 @@ bool CMainWindow::Run()
          {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
-               std::cout << "mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
-               m_sim.AddBody(1.0, 1.0, CVector2(event.mouseButton.x, event.mouseButton.y));
+               std::cout << "Init mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+               m_vInitClickPos = CVector2({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
+            }
+         }
+         else if (event.type == sf::Event::MouseButtonReleased)
+         {
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+               CVector2 finalClickPos({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
+               std::cout << "Final mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+               CVector2 initVel = (finalClickPos - m_vInitClickPos);
+               std::cout << "Velocity (x, y) = (" << initVel[0] << ", " << initVel[1] << ")" << std::endl;
+               initVel.Normalise();
+
+               m_sim.AddBody(1.0, 1.0, m_vInitClickPos, initVel);
             }
          }
          else if (event.type == sf::Event::Resized)
@@ -91,10 +103,10 @@ bool CMainWindow::Run()
 void CMainWindow::SetupSim()
 {
    // Add first body
-   m_sim.AddBody(500.0, 50.0, CVector2(400.0, 300.0));
+   m_sim.AddBody(500.0, 50.0, CVector2({ 400.0, 300.0 }), true);
 
    // Add second body
-   m_sim.AddBody(1.0, 2.0, CVector2(400.0 + 150.0, 300.0), CVector2(0.0, 2.0));
+   m_sim.AddBody(1.0, 2.0, CVector2({ 400.0 + 150.0, 300.0 }), CVector2({ 0.0, 2.0 }));
    // Add third body
    //m_sim.AddBody(0.5, 0.01, CVector2(200, 0.0), CVector2(0.0, 3.0));
 }

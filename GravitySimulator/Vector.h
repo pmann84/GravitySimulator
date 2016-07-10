@@ -10,8 +10,16 @@ class CVector
 public:
 
    // Constructors & Destructors
-   CVector() : m_data{0} {};
-   CVector(std::initializer_list<TYPE> data) : m_data(data) {}
+   CVector() : m_data(std::array<TYPE, DIM>{0}) {};
+   CVector(std::initializer_list<TYPE> data)
+   {
+      if (data.size() > DIM)
+      {
+         throw;
+      }
+      std::copy(data.begin(), data.end(), m_data.begin());
+   }
+
    ~CVector() {};
 
    // Random Access Operators
@@ -50,6 +58,21 @@ public:
       for (unsigned int i = 0; i < DIM; ++i)
       {
          m_data[i] -= rhs[i];
+      }
+      return *this;
+   }
+
+   // Multiplication with other types
+   friend CVector<TYPE, DIM> operator*(CVector lhs, const float& rhs)
+   {
+      return lhs *= rhs;
+   }
+
+   CVector<TYPE, DIM>& operator*=(const float& rhs)
+   {
+      for (unsigned int i = 0; i < DIM; ++i)
+      {
+         m_data[i] *= rhs;
       }
       return *this;
    }
@@ -105,7 +128,7 @@ public:
       TYPE result = static_cast<TYPE>(0);
       for (auto& data : m_data)
       {
-         result += data*edata;
+         result += data*data;
       }
       return result;
    }
@@ -116,6 +139,15 @@ public:
       // The euclidean norm - defined as the square root of sum of the squares of all the vector elements
       // Physically this is the length of the vector
       return std::sqrt(NormSquared());
+   }
+
+   void Normalise()
+   {
+      auto magnitude = Norm();
+      for (auto i=0; i<DIM; ++i)
+      {
+         m_data[i] /= magnitude;
+      }
    }
 
    // TODO: Dot Product
