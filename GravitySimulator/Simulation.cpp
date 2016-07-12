@@ -79,7 +79,7 @@ void CSimulation::Update()
             case IntegrationMethod::Euler:
                dt = 1.0;
                new_vel = body.Velocity() + force_agg*dt;
-               new_pos = body.Position() + new_vel*dt;
+               new_pos = body.Position() + new_vel*dt + force_agg*0.5*dt*dt;
                body.Velocity(new_vel);
                body.Position(new_pos);
                break;
@@ -97,6 +97,10 @@ void CSimulation::Update()
             // Euler
             // v_n+1 = v_n + sum(F)*dt
             // p_n+1 = p_n + v_n+1 *dt
+
+            // v_n+1 = v_n + sum(F)*dt
+            // p_n+1 = p_n + v_n+1 *dt + 0.5*sum(F)*dt*dt
+
             // Vertlet
             // 
             // 
