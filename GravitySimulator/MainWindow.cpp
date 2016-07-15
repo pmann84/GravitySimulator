@@ -102,14 +102,22 @@ bool CMainWindow::Run()
 
 void CMainWindow::SetupSim()
 {
-   // Set up a "real" earth sun like situation, using Solar Masses, Earth-Sun Radii, and 1yr timescale
+   // Set up a "real" earth sun like situation, using Solar Masses, AU, and 1yr timescale
+   
+   // Actual values
    double massSun = 1.989e30;
    double massEarth = 5.972e24;
    double massMars = 6.39e23;
    double sunEarthRadius = 3.1536e7;
    double oneYearInSeconds = 1.496e11;
+
+   // Scaled values
+   double scaledMassSun = massSun / massSun;
+   double scaledMassEarth = massEarth / massSun;
+   double scaledMassMars = massMars / massSun;
+
    m_sim.G(massSun, sunEarthRadius, oneYearInSeconds);
-   m_sim.AddBody(1.0, 10.0, CVector2({ 0.0, 0.0 }), CVector2({ 0.0, 0.0 }), CVector3({ 255.0, 255.0, 0.0 })); // Sun
-   m_sim.AddBody(massEarth/massSun, 2.0, CVector2({ 1.0, 0.0 }), CVector2({ 0.0, 6.5 }), CVector3({ 0.0, 204.0, 0.0 })); // Earth
-   m_sim.AddBody(massMars/massSun, 1.0, CVector2({ 1.524, 0.0 }), CVector2({ 0.0, 6.5 }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
+   m_sim.AddBody(scaledMassSun, 10.0, CVector2({ 0.0, 0.0 }), CVector2({ 0.0, 0.0 }), CVector3({ 255.0, 255.0, 0.0 })); // Sun
+   m_sim.AddBody(scaledMassEarth, 2.0, CVector2({ 1.0, 0.0 }), CVector2({ 0.0, 6.5 }), CVector3({ 0.0, 204.0, 0.0 })); // Earth
+   m_sim.AddBody(scaledMassMars, 1.0, CVector2({ 1.524, 0.0 }), CVector2({ 0.0, 2.0 }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
 }
