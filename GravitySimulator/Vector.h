@@ -63,12 +63,12 @@ public:
    }
 
    // Multiplication with other types
-   friend CVector<TYPE, DIM> operator*(CVector lhs, const float& rhs)
+   friend CVector<TYPE, DIM> operator*(CVector lhs, const TYPE& rhs)
    {
       return lhs *= rhs;
    }
 
-   CVector<TYPE, DIM>& operator*=(const float& rhs)
+   CVector<TYPE, DIM>& operator*=(const TYPE& rhs)
    {
       for (unsigned int i = 0; i < DIM; ++i)
       {
@@ -160,5 +160,6 @@ private:
 };
 
 typedef CVector<double, 2> CVector2;
+typedef CVector<double, 3> CVector3;
 
 #endif // __VECTOR_H__

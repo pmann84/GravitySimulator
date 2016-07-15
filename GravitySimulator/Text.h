@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Simulation.h"
+
 class CText
 {
 public:
@@ -16,7 +18,7 @@ public:
    sf::Font& Font();
 
    bool Init();
-   bool Draw(sf::RenderWindow& window, int fps, int bCount);
+   bool Draw(sf::RenderWindow& window, int fps, const CSimulation& sim);
 
 private:
    std::string m_fontPath;
@@ -24,8 +26,10 @@ private:
 
    std::string GetFrameRateString(int fps) const;
    std::string GetBodyCountString(int count) const;
+   std::string GetGravConstValueString(double val) const;
    std::string GetWindowResString(sf::RenderWindow& window) const;
-   std::string GetStringForIntValue(std::string text, int value) const;
+   std::string GetStringForValue(std::string text, int value) const;
+   std::string GetStringForValue(std::string text, double value) const;
    std::string AddNewline() const;
 };
 

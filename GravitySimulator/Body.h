@@ -17,6 +17,9 @@ public:
    CVector2 Velocity() const;
    void Velocity(const CVector2& rVel);
 
+   CVector3 Colour() const;
+   void Colour(const CVector3& rColour);
+
    unsigned int Id() const { return m_iBodyId; };
 
    double Mass() const { return m_dMass; };
@@ -43,6 +46,7 @@ private:
    double m_dRadius;
    CVector2 m_vPosition;
    CVector2 m_vVelocity;
+   CVector3 m_vColour;
    bool m_bStatic;
 };
 

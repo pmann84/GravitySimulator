@@ -1,5 +1,6 @@
 ﻿#include "Text.h"
 
+
 CText::CText()
 {
 }
@@ -29,7 +30,7 @@ bool CText::Init()
    return true;
 }
 
-bool CText::Draw(sf::RenderWindow& window, int fps, int bCount)
+bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim)
 {
    sf::Text screenText;
    screenText.setFont(Font());
@@ -39,7 +40,9 @@ bool CText::Draw(sf::RenderWindow& window, int fps, int bCount)
    windowStr += AddNewline();
    windowStr += GetWindowResString(window);
    windowStr += AddNewline();
-   windowStr += GetBodyCountString(bCount);
+   windowStr += GetBodyCountString(sim.BodyCount());
+   windowStr += AddNewline();
+   windowStr += GetGravConstValueString(sim.G());
 
    screenText.setString(windowStr);
    window.draw(screenText);
@@ -48,12 +51,17 @@ bool CText::Draw(sf::RenderWindow& window, int fps, int bCount)
 
 std::string CText::GetFrameRateString(int fps) const
 {
-   return GetStringForIntValue("Framerate: ", fps);
+   return GetStringForValue("Framerate: ", fps);
 }
 
 std::string CText::GetBodyCountString(int count) const
 {
-   return GetStringForIntValue("Body Count: ", count);
+   return GetStringForValue("Body Count: ", count);
+}
+
+std::string CText::GetGravConstValueString(double val) const
+{
+   return GetStringForValue("Gavitational Constant: ", val);
 }
 
 std::string CText::GetWindowResString(sf::RenderWindow& window) const
@@ -64,7 +72,14 @@ std::string CText::GetWindowResString(sf::RenderWindow& window) const
    return ss.str();
 }
 
-std::string CText::GetStringForIntValue(std::string text, int value) const
+std::string CText::GetStringForValue(std::string text, int value) const
+{
+   std::stringstream ss;
+   ss << text << std::to_string(value);
+   return ss.str();
+}
+
+std::string CText::GetStringForValue(std::string text, double value) const
 {
    std::stringstream ss;
    ss << text << std::to_string(value);

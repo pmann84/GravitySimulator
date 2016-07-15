@@ -33,7 +33,7 @@ bool CMainWindow::Draw()
    m_sim.Draw(m_window);
 
    int fps = m_fps.GetFps();
-   m_text.Draw(m_window, fps, m_sim.BodyCount());
+   m_text.Draw(m_window, fps, m_sim);
 
    m_window.setView(m_view);
    m_window.display();
@@ -68,27 +68,27 @@ bool CMainWindow::Run()
                m_sim.Reset();
             }
          }
-         else if (event.type == sf::Event::MouseButtonPressed)
-         {
-            if (event.mouseButton.button == sf::Mouse::Left)
-            {
-               std::cout << "Init mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
-               m_vInitClickPos = CVector2({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
-            }
-         }
-         else if (event.type == sf::Event::MouseButtonReleased)
-         {
-            if (event.mouseButton.button == sf::Mouse::Left)
-            {
-               CVector2 finalClickPos({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
-               std::cout << "Final mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
-               CVector2 initVel = (finalClickPos - m_vInitClickPos);
-               std::cout << "Velocity (x, y) = (" << initVel[0] << ", " << initVel[1] << ")" << std::endl;
-               initVel.Normalise();
+         //else if (event.type == sf::Event::MouseButtonPressed)
+         //{
+         //   if (event.mouseButton.button == sf::Mouse::Left)
+         //   {
+         //      std::cout << "Init mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+         //      m_vInitClickPos = CVector2({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
+         //   }
+         //}
+         //else if (event.type == sf::Event::MouseButtonReleased)
+         //{
+         //   if (event.mouseButton.button == sf::Mouse::Left)
+         //   {
+         //      CVector2 finalClickPos({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
+         //      std::cout << "Final mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+         //      CVector2 initVel = (finalClickPos - m_vInitClickPos);
+         //      std::cout << "Velocity (x, y) = (" << initVel[0] << ", " << initVel[1] << ")" << std::endl;
+         //      initVel.Normalise();
 
-               m_sim.AddBody(1.0, 1.0, m_vInitClickPos, initVel);
-            }
-         }
+         //      m_sim.AddBody(1.0, 1.0, m_vInitClickPos, initVel);
+         //   }
+         //}
          else if (event.type == sf::Event::Resized)
          {
             OnResize();
@@ -102,11 +102,14 @@ bool CMainWindow::Run()
 
 void CMainWindow::SetupSim()
 {
-   // Add first body
-   m_sim.AddBody(500.0, 50.0, CVector2({ 400.0, 300.0 }), true);
-
-   // Add second body
-   m_sim.AddBody(1.0, 2.0, CVector2({ 400.0 + 150.0, 300.0 }), CVector2({ 0.0, 2.0 }));
-   // Add third body
-   //m_sim.AddBody(0.5, 0.01, CVector2(200, 0.0), CVector2(0.0, 3.0));
+   // Set up a "real" earth sun like situation, using Solar Masses, Earth-Sun Radii, and 1yr timescale
+   double massSun = 1.989e30;
+   double massEarth = 5.972e24;
+   double massMars = 6.39e23;
+   double sunEarthRadius = 3.1536e7;
+   double oneYearInSeconds = 1.496e11;
+   m_sim.G(massSun, sunEarthRadius, oneYearInSeconds);
+   m_sim.AddBody(1.0, 10.0, CVector2({ 0.0, 0.0 }), CVector2({ 0.0, 0.0 }), CVector3({ 255.0, 255.0, 0.0 })); // Sun
+   m_sim.AddBody(massEarth/massSun, 2.0, CVector2({ 1.0, 0.0 }), CVector2({ 0.0, 6.5 }), CVector3({ 0.0, 204.0, 0.0 })); // Earth
+   m_sim.AddBody(massMars/massSun, 1.0, CVector2({ 1.524, 0.0 }), CVector2({ 0.0, 6.5 }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
 }

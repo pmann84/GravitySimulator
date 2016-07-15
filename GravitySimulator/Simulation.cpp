@@ -2,10 +2,24 @@
 
 CSimulation::CSimulation() : m_nextId(0)
 {
+   InitSimBounds();
 }
 
 CSimulation::~CSimulation()
 {
+}
+
+void CSimulation::InitSimBounds()
+{
+   SetSimBounds(-3.0, 3.0, -3.0, 3.0);
+}
+
+void CSimulation::SetSimBounds(double xMin, double xMax, double yMin, double yMax)
+{
+   m_simBounds.x_axis.Min = xMin;
+   m_simBounds.x_axis.Max = xMax;
+   m_simBounds.y_axis.Min = yMin;
+   m_simBounds.y_axis.Max = yMax;
 }
 
 void CSimulation::AddBody(CBody& body)
@@ -34,6 +48,16 @@ void CSimulation::AddBody(double mass, double radius, CVector2 position, CVector
    CBody newBody(m_nextId++, mass, radius);
    newBody.Position(position);
    newBody.Velocity(velocity);
+   newBody.Static(isStatic);
+   AddBody(newBody);
+}
+
+void CSimulation::AddBody(double mass, double radius, CVector2 position, CVector2 velocity, CVector3 colour, bool isStatic)
+{
+   CBody newBody(m_nextId++, mass, radius);
+   newBody.Position(position);
+   newBody.Velocity(velocity);
+   newBody.Colour(colour);
    newBody.Static(isStatic);
    AddBody(newBody);
 }
@@ -67,7 +91,7 @@ void CSimulation::Update()
                   //std::cout << "\tAdding force contribution from Body " << forceFromBody.Id() << std::endl;
                   auto distVector = forceFromBody.Position() - body.Position();
                   auto distMag = distVector.Norm()*distVector.Norm()*distVector.Norm();
-                  auto forceAdd = CVector2({ (forceFromBody.Mass()*distVector[0]) / distMag, (forceFromBody.Mass()*distVector[1]) / distMag });
+                  auto forceAdd = CVector2({ (G()*forceFromBody.Mass()*distVector[0]) / distMag, (G()*forceFromBody.Mass()*distVector[1]) / distMag });
                   force_agg += forceAdd;
                }
             }
@@ -77,9 +101,9 @@ void CSimulation::Update()
             switch (intMethod)
             {
             case IntegrationMethod::Euler:
-               dt = 1.0;
+               dt = 0.01;
                new_vel = body.Velocity() + force_agg*dt;
-               new_pos = body.Position() + new_vel*dt + force_agg*0.5*dt*dt;
+               new_pos = body.Position() + new_vel*dt;
                body.Velocity(new_vel);
                body.Position(new_pos);
                break;
@@ -122,23 +146,44 @@ void CSimulation::Draw(sf::RenderWindow& window)
    {
       for (auto b : m_bodies)
       {
-         //sf::CircleShape shape(static_cast<float>(b.Radius()));
-         sf::CircleShape shape(static_cast<float>(1.0));
+         sf::CircleShape shape(static_cast<float>(b.Radius()));
+         //shape.setFillColor(sfmlutils::ToSfColor(b.Colour()));
          shape.setFillColor(sf::Color::Yellow);
-         auto screenCoords = toSfVector2(b.Position());
+         auto screenCoords = toSfVector2(b.Position(), window);
          // Draw at the centre
          shape.setPosition(static_cast<float>(screenCoords.x), static_cast<float>(screenCoords.y));
          // adjust for radius of circle
-         //shape.move(static_cast<float>(-b.Radius()), static_cast<float>(-b.Radius()));
-         shape.move(static_cast<float>(1.0), static_cast<float>(1.0));
+         shape.move(static_cast<float>(-b.Radius()), static_cast<float>(-b.Radius()));
          
          window.draw(shape);
       }
    }
 }
 
-sf::Vector2f CSimulation::toSfVector2(CVector2 coord)
+double CSimulation::G() const
 {
-   return sf::Vector2f(static_cast<float>(coord[0]), 
-                       static_cast<float>(coord[1]));
+   return m_gravConst;
+}
+
+void CSimulation::G(double g)
+{
+   m_gravConst = g;
+}
+
+void CSimulation::G(double massScale, double timeScale, double lengthScale)
+{
+   m_gravConst = (GCONST * massScale * timeScale * timeScale) / (lengthScale*lengthScale*lengthScale);
+}
+
+sf::Vector2f CSimulation::toSfVector2(CVector2 coord, sf::RenderWindow& window)
+{
+   // Get conversion delta
+   double deltax = (m_simBounds.x_axis.Max - m_simBounds.x_axis.Min) / window.getSize().x;
+   double deltay = (m_simBounds.y_axis.Max - m_simBounds.y_axis.Min) / window.getSize().y;
+   // Convert sim space to screen space
+   double xpos = (coord[0] - m_simBounds.x_axis.Min) / deltax;
+   double ypos = (m_simBounds.y_axis.Max - coord[1]) / deltay;
+
+   return sf::Vector2f(static_cast<float>(xpos),
+                       static_cast<float>(ypos));
 }

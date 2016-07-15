@@ -41,3 +41,13 @@ void CBody::Velocity(const CVector2& rVel)
 {
    m_vVelocity = rVel;
 }
+
+CVector3 CBody::Colour() const
+{
+   return m_vColour;
+}
+
+void CBody::Colour(const CVector3& rColour)
+{
+   m_vColour = rColour;
+}
