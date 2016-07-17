@@ -104,20 +104,46 @@ void CMainWindow::SetupSim()
 {
    // Set up a "real" earth sun like situation, using Solar Masses, AU, and 1yr timescale
    
-   // Actual values
+   // Actual values - temporal
+   double oneYearInSeconds = 3.1536e7;
+   // Distances
+   double sunMercuryRadius = 5.791e10;
+   double sunVenusRadius = 1.082e11;
+   double sunEarthRadius = 1.496e11;
+   double sunMarsRadius = 2.279e11;
+   // Masses
    double massSun = 1.989e30;
+   double massMercury = 3.285e23;
+   double massVenus = 4.867e24;
    double massEarth = 5.972e24;
    double massMars = 6.39e23;
-   double sunEarthRadius = 3.1536e7;
-   double oneYearInSeconds = 1.496e11;
+   // Orbital Speeds
+   double velocityMercury = 5.66e4; //56.6 km/s
+   double velocityVenus = 3.502e4; // 35.02 km/s
+   double velocityEarth = 3e4; // 30 km/s
+   double velocityMars = 2.4e4; //24 km/s
 
-   // Scaled values
+   // Scaled values - Distances
+   double scaledDistMercury = sunMercuryRadius / sunEarthRadius;
+   double scaledDistVenus = sunVenusRadius / sunEarthRadius;
+   double scaledDistEarth = sunEarthRadius / sunEarthRadius;
+   double scaledDistMars = sunMarsRadius / sunEarthRadius;
+   // Masses
    double scaledMassSun = massSun / massSun;
+   double scaledMassMercury = massMercury / massSun;
+   double scaledMassVenus = massVenus / massSun;
    double scaledMassEarth = massEarth / massSun;
    double scaledMassMars = massMars / massSun;
+   // Orbital speeds
+   double scaledVelMercury = (velocityMercury * oneYearInSeconds) / sunEarthRadius;
+   double scaledVelVenus = (velocityVenus * oneYearInSeconds) / sunEarthRadius;
+   double scaledVelEarth = (velocityEarth * oneYearInSeconds) / sunEarthRadius;
+   double scaledVelMars = (velocityMars * oneYearInSeconds) / sunEarthRadius;
 
-   m_sim.G(massSun, sunEarthRadius, oneYearInSeconds);
+   m_sim.G(massSun, oneYearInSeconds, sunEarthRadius);
    m_sim.AddBody(scaledMassSun, 10.0, CVector2({ 0.0, 0.0 }), CVector2({ 0.0, 0.0 }), CVector3({ 255.0, 255.0, 0.0 })); // Sun
-   m_sim.AddBody(scaledMassEarth, 2.0, CVector2({ 1.0, 0.0 }), CVector2({ 0.0, 6.5 }), CVector3({ 0.0, 204.0, 0.0 })); // Earth
-   m_sim.AddBody(scaledMassMars, 1.0, CVector2({ 1.524, 0.0 }), CVector2({ 0.0, 2.0 }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
+   m_sim.AddBody(scaledMassMercury, 1.0, CVector2({ scaledDistMercury, 0.0 }), CVector2({ 0.0, scaledVelMercury }), CVector3({ 0.0, 204.0, 0.0 })); // Mercury
+   m_sim.AddBody(scaledMassVenus, 1.0, CVector2({ scaledDistVenus, 0.0 }), CVector2({ 0.0, scaledVelVenus }), CVector3({ 0.0, 204.0, 0.0 })); // Venus
+   m_sim.AddBody(scaledMassEarth, 2.0, CVector2({ scaledDistEarth, 0.0 }), CVector2({ 0.0, scaledVelEarth }), CVector3({ 0.0, 204.0, 0.0 })); // Earth
+   m_sim.AddBody(scaledMassMars, 1.0, CVector2({ scaledDistMars, 0.0 }), CVector2({ 0.0, scaledVelMars }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
 }

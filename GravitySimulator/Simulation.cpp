@@ -98,25 +98,13 @@ void CSimulation::Update()
 
             double dt;
             CVector2 new_vel, new_pos;
-            switch (intMethod)
-            {
-            case IntegrationMethod::Euler:
-               dt = 0.01;
-               new_vel = body.Velocity() + force_agg*dt;
-               new_pos = body.Position() + new_vel*dt;
-               body.Velocity(new_vel);
-               body.Position(new_pos);
-               break;
-            case IntegrationMethod::Verlet:
-               break;
-            }
-            
-            // Update position and velocity
-            // m_i d^2 p_i / dt^2 = - G m_i m_j (p_j - p_i) / || p_j - p_i ||^3
 
-            // d v_i / dt = - sum{ G m_j (p_j - p_i) / || p_j - p_i ||^3 }
-            // d p_i / dt = v_i
-            
+            dt = 0.0001;
+            new_vel = body.Velocity() + force_agg*dt;
+            new_pos = body.Position() + new_vel*dt;
+            body.Velocity(new_vel);
+            body.Position(new_pos);
+                       
 
             // Euler
             // v_n+1 = v_n + sum(F)*dt
@@ -125,10 +113,12 @@ void CSimulation::Update()
             // v_n+1 = v_n + sum(F)*dt
             // p_n+1 = p_n + v_n+1 *dt + 0.5*sum(F)*dt*dt
 
-            // Vertlet
-            // 
-            // 
-            
+            // Improved Euler
+            // a_n = sum(F(p_n))
+            // p_temp = p_n + v_n * dt
+            // a_temp = sum(F(p_temp))
+            // v_n+1 = v_n + 0.5 * (a_n + a_temp) * dt
+            // p_n+1 = p_n + 0.5 * (v_n+1 + v_n) * dt
          }
       }
    }
