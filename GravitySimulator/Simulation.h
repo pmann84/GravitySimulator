@@ -52,6 +52,8 @@ public:
    double G() const;
    void G(double g);
    void G(double massScale, double timeScale, double lengthScale);
+   double Energy() const;
+   CVector2 AngularMomentum() const;
 
 private:
    double m_gravConst;

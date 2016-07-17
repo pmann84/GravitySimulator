@@ -89,10 +89,7 @@ void CSimulation::Update()
                {
                   // Calculate the contribution of the force between the two bodies
                   //std::cout << "\tAdding force contribution from Body " << forceFromBody.Id() << std::endl;
-                  auto distVector = forceFromBody.Position() - body.Position();
-                  auto distMag = distVector.Norm()*distVector.Norm()*distVector.Norm();
-                  auto forceAdd = CVector2({ (G()*forceFromBody.Mass()*distVector[0]) / distMag, (G()*forceFromBody.Mass()*distVector[1]) / distMag });
-                  force_agg += forceAdd;
+                  force_agg += body.ForceExertedBy(forceFromBody, G());
                }
             }
 
@@ -100,8 +97,10 @@ void CSimulation::Update()
             CVector2 new_vel, new_pos;
 
             dt = 0.0001;
+
             new_vel = body.Velocity() + force_agg*dt;
             new_pos = body.Position() + new_vel*dt;
+            body.Acceleration(force_agg);
             body.Velocity(new_vel);
             body.Position(new_pos);
                        
@@ -163,6 +162,25 @@ void CSimulation::G(double g)
 void CSimulation::G(double massScale, double timeScale, double lengthScale)
 {
    m_gravConst = (GCONST * massScale * timeScale * timeScale) / (lengthScale*lengthScale*lengthScale);
+}
+
+double CSimulation::Energy() const
+{
+   // E = 0.5 * sum{i=1..N}(m_i v_i^2) - sum{i=1..N}(sum{j=i..N}(Gm_im_j/|r_i - r_j|))
+   double energy = 0.0;
+   for (auto& body : m_bodies)
+   {
+      energy += 0.5*body.Mass()*body.Velocity().NormSquared(); // Kinetic energy
+      // Get all bodies with 
+      //energy -= 
+   }
+   return energy;
+}
+
+CVector2 CSimulation::AngularMomentum() const
+{
+   // J = sum{i=1..N}(r_i cross m_i v_i)
+   return CVector2();
 }
 
 sf::Vector2f CSimulation::toSfVector2(CVector2 coord, sf::RenderWindow& window)

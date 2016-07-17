@@ -43,6 +43,8 @@ bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim)
    windowStr += GetBodyCountString(sim.BodyCount());
    windowStr += AddNewline();
    windowStr += GetGravConstValueString(sim.G());
+   windowStr += AddNewline();
+   windowStr += GetSimTotalEnergyString(sim.Energy());
 
    screenText.setString(windowStr);
    window.draw(screenText);
@@ -62,6 +64,11 @@ std::string CText::GetBodyCountString(int count) const
 std::string CText::GetGravConstValueString(double val) const
 {
    return GetStringForValue("Gavitational Constant: ", val);
+}
+
+std::string CText::GetSimTotalEnergyString(double val) const
+{
+   return GetStringForValue("Total Energy: ", val);
 }
 
 std::string CText::GetWindowResString(sf::RenderWindow& window) const

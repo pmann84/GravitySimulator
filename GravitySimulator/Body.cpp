@@ -42,6 +42,16 @@ void CBody::Velocity(const CVector2& rVel)
    m_vVelocity = rVel;
 }
 
+CVector2 CBody::Acceleration() const
+{
+   return m_vAcceleration;
+}
+
+void CBody::Acceleration(const CVector2& rAcc)
+{
+   m_vAcceleration = rAcc;
+}
+
 CVector3 CBody::Colour() const
 {
    return m_vColour;
@@ -50,4 +60,12 @@ CVector3 CBody::Colour() const
 void CBody::Colour(const CVector3& rColour)
 {
    m_vColour = rColour;
+}
+
+CVector2 CBody::ForceExertedBy(const CBody& body, double G)
+{
+   auto distVector = body.Position() - Position();
+   auto distMag = distVector.Norm()*distVector.Norm()*distVector.Norm();
+   auto forceAdd = CVector2({ (G*body.Mass()*distVector[0]) / distMag, (G*body.Mass()*distVector[1]) / distMag });
+   return forceAdd;
 }

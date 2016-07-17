@@ -27,6 +27,7 @@ private:
    std::string GetFrameRateString(int fps) const;
    std::string GetBodyCountString(int count) const;
    std::string GetGravConstValueString(double val) const;
+   std::string GetSimTotalEnergyString(double val) const;
    std::string GetWindowResString(sf::RenderWindow& window) const;
    std::string GetStringForValue(std::string text, int value) const;
    std::string GetStringForValue(std::string text, double value) const;

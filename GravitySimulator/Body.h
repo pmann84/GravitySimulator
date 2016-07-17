@@ -17,6 +17,9 @@ public:
    CVector2 Velocity() const;
    void Velocity(const CVector2& rVel);
 
+   CVector2 Acceleration() const;
+   void Acceleration(const CVector2& rAcc);
+
    CVector3 Colour() const;
    void Colour(const CVector3& rColour);
 
@@ -31,12 +34,15 @@ public:
    bool Static() const { return m_bStatic; };
    void Static(bool s) { m_bStatic = s; };
 
+   CVector2 ForceExertedBy(const CBody& body, double G);
+
    void operator=(const CBody& body)
    {
       m_dMass = body.Mass();
       m_dRadius = body.Radius();
       m_vPosition = body.Position();
       m_vVelocity = body.Velocity();
+      m_vAcceleration = body.Acceleration();
       m_bStatic = body.Static();
    }
 
@@ -46,6 +52,7 @@ private:
    double m_dRadius;
    CVector2 m_vPosition;
    CVector2 m_vVelocity;
+   CVector2 m_vAcceleration;
    CVector3 m_vColour;
    bool m_bStatic;
 };
