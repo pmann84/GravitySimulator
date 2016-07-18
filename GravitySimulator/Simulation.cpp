@@ -25,7 +25,6 @@ void CSimulation::SetSimBounds(double xMin, double xMax, double yMin, double yMa
 void CSimulation::AddBody(CBody& body)
 {
    m_bodies.push_back(body);
-   m_bodies_original.push_back(body);
 }
 
 void CSimulation::AddBody(double mass, double radius, bool isStatic)
@@ -96,7 +95,7 @@ void CSimulation::Update()
             double dt;
             CVector2 new_vel, new_pos;
 
-            dt = 0.0001;
+            dt = 0.01;
 
             new_vel = body.Velocity() + force_agg*dt;
             new_pos = body.Position() + new_vel*dt;
@@ -125,8 +124,11 @@ void CSimulation::Update()
 
 void CSimulation::Reset()
 {
-   m_bodies.clear();
-   m_bodies = m_bodies_original;
+   for (auto& body : m_bodies)
+   {
+      body.Position(body.InitialPosition());
+      body.Velocity(body.InitialVelocity());
+   }
 }
 
 void CSimulation::Draw(sf::RenderWindow& window)
@@ -147,6 +149,16 @@ void CSimulation::Draw(sf::RenderWindow& window)
          window.draw(shape);
       }
    }
+}
+
+void CSimulation::Pause()
+{
+   m_bPaused = !m_bPaused;
+}
+
+bool CSimulation::IsPaused()
+{
+   return m_bPaused;
 }
 
 double CSimulation::G() const

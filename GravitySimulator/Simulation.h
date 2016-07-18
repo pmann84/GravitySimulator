@@ -48,6 +48,8 @@ public:
    void Update();
    void Reset();
    void Draw(sf::RenderWindow& window);
+   void Pause();
+   bool IsPaused();
 
    double G() const;
    void G(double g);
@@ -57,9 +59,9 @@ public:
 
 private:
    double m_gravConst;
+   bool m_bPaused;
 
    std::vector<CBody> m_bodies;
-   std::vector<CBody> m_bodies_original;
    unsigned int m_nextId;
 
    SimulationBounds2D m_simBounds;

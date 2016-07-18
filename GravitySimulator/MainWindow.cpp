@@ -66,6 +66,10 @@ bool CMainWindow::Run()
             {
             case sf::Keyboard::R:
                m_sim.Reset();
+               break;
+            case sf::Keyboard::Space:
+               m_sim.Pause();
+               break;
             }
          }
          //else if (event.type == sf::Event::MouseButtonPressed)
@@ -94,8 +98,11 @@ bool CMainWindow::Run()
             OnResize();
          }
       }
-      m_sim.Update();
-      Draw();
+      if (!m_sim.IsPaused())
+      {
+         m_sim.Update();
+         Draw();
+      }
    }
    return true;
 }
@@ -142,8 +149,8 @@ void CMainWindow::SetupSim()
 
    m_sim.G(massSun, oneYearInSeconds, sunEarthRadius);
    m_sim.AddBody(scaledMassSun, 10.0, CVector2({ 0.0, 0.0 }), CVector2({ 0.0, 0.0 }), CVector3({ 255.0, 255.0, 0.0 })); // Sun
-   m_sim.AddBody(scaledMassMercury, 1.0, CVector2({ scaledDistMercury, 0.0 }), CVector2({ 0.0, scaledVelMercury }), CVector3({ 0.0, 204.0, 0.0 })); // Mercury
-   m_sim.AddBody(scaledMassVenus, 1.0, CVector2({ scaledDistVenus, 0.0 }), CVector2({ 0.0, scaledVelVenus }), CVector3({ 0.0, 204.0, 0.0 })); // Venus
+   //m_sim.AddBody(scaledMassMercury, 1.0, CVector2({ scaledDistMercury, 0.0 }), CVector2({ 0.0, scaledVelMercury }), CVector3({ 0.0, 204.0, 0.0 })); // Mercury
+   //m_sim.AddBody(scaledMassVenus, 1.0, CVector2({ scaledDistVenus, 0.0 }), CVector2({ 0.0, scaledVelVenus }), CVector3({ 0.0, 204.0, 0.0 })); // Venus
    m_sim.AddBody(scaledMassEarth, 2.0, CVector2({ scaledDistEarth, 0.0 }), CVector2({ 0.0, scaledVelEarth }), CVector3({ 0.0, 204.0, 0.0 })); // Earth
-   m_sim.AddBody(scaledMassMars, 1.0, CVector2({ scaledDistMars, 0.0 }), CVector2({ 0.0, scaledVelMars }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
+   //m_sim.AddBody(scaledMassMars, 1.0, CVector2({ scaledDistMars, 0.0 }), CVector2({ 0.0, scaledVelMars }), CVector3({ 255.0, 0.0, 0.0 })); // Mars
 }

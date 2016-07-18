@@ -13,9 +13,15 @@ public:
 
    CVector2 Position() const;
    void Position(const CVector2& rPos);
+   
+   CVector2 InitialPosition() const;
+   void InitialPosition(const CVector2& rPos);
 
    CVector2 Velocity() const;
    void Velocity(const CVector2& rVel);
+
+   CVector2 InitialVelocity() const;
+   void InitialVelocity(const CVector2& rVel);
 
    CVector2 Acceleration() const;
    void Acceleration(const CVector2& rAcc);
@@ -51,7 +57,9 @@ private:
    double m_dMass;
    double m_dRadius;
    CVector2 m_vPosition;
+   CVector2 m_vInitialPosition;
    CVector2 m_vVelocity;
+   CVector2 m_vInitialVelocity;
    CVector2 m_vAcceleration;
    CVector3 m_vColour;
    bool m_bStatic;

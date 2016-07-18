@@ -13,7 +13,9 @@ CBody::CBody(const CBody& body) :
             m_dMass(body.Mass()), 
             m_dRadius(body.Radius()), 
             m_vPosition(body.Position()), 
+            m_vInitialPosition(body.Position()),
             m_vVelocity(body.Velocity()), 
+            m_vInitialVelocity(body.Velocity()),
             m_bStatic(body.Static())
 {
 }
@@ -32,6 +34,16 @@ void CBody::Position(const CVector2& rPos)
    m_vPosition = rPos;
 }
 
+CVector2 CBody::InitialPosition() const
+{
+   return m_vInitialPosition;
+}
+
+void CBody::InitialPosition(const CVector2& rPos)
+{
+   m_vInitialPosition = rPos;
+}
+
 CVector2 CBody::Velocity() const
 {
    return m_vVelocity;
@@ -40,6 +52,16 @@ CVector2 CBody::Velocity() const
 void CBody::Velocity(const CVector2& rVel)
 {
    m_vVelocity = rVel;
+}
+
+CVector2 CBody::InitialVelocity() const
+{
+   return m_vInitialVelocity;
+}
+
+void CBody::InitialVelocity(const CVector2& rVel)
+{
+   m_vInitialVelocity = rVel;
 }
 
 CVector2 CBody::Acceleration() const
