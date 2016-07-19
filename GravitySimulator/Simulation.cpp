@@ -66,11 +66,26 @@ int CSimulation::BodyCount() const
    return m_bodies.size();
 }
 
+CVector2 CSimulation::CalculateTotalForceOnBody(const CBody& body)
+{
+   CVector2 force_agg;
+   for (auto forceFromBody : m_bodies)
+   {
+      // Only add force contributions of other bodies, not itself
+      if (body.Id() != forceFromBody.Id())
+      {
+         // Calculate the contribution of the force between the two bodies
+         force_agg += body.ForceExertedBy(forceFromBody, G());
+      }
+   }
+   return force_agg;
+}
+
 void CSimulation::Update()
 {
-   auto intMethod = IntegrationMethod::Euler;
+   auto intMethod = IntegrationMethod::Leapfrog;
 
-   CVector2 force_agg;
+   CVector2 force_agg, new_force_agg;
    if (m_bodies.size() > 0)
    {
       // Loop over each body to calculate new position
@@ -79,44 +94,56 @@ void CSimulation::Update()
          // Only calculate new position if body is not statics
          if (!body.Static())
          {
-            //std::cout << "Calculating Total Force on Body " << body.Id() << std::endl;
             // Loop over all the bodies again
-            for (auto forceFromBody : m_bodies)
-            {
-               // Only add force contributions of other bodies, not itself
-               if (body.Id() != forceFromBody.Id())
-               {
-                  // Calculate the contribution of the force between the two bodies
-                  //std::cout << "\tAdding force contribution from Body " << forceFromBody.Id() << std::endl;
-                  force_agg += body.ForceExertedBy(forceFromBody, G());
-               }
-            }
+            force_agg = CalculateTotalForceOnBody(body);
 
             double dt;
             CVector2 new_vel, new_pos;
+            CVector2 temp_vel;
 
             dt = 0.01;
 
-            new_vel = body.Velocity() + force_agg*dt;
-            new_pos = body.Position() + new_vel*dt;
-            body.Acceleration(force_agg);
-            body.Velocity(new_vel);
-            body.Position(new_pos);
-                       
-
-            // Euler
-            // v_n+1 = v_n + sum(F)*dt
-            // p_n+1 = p_n + v_n+1 *dt
-
-            // v_n+1 = v_n + sum(F)*dt
-            // p_n+1 = p_n + v_n+1 *dt + 0.5*sum(F)*dt*dt
-
-            // Improved Euler
-            // a_n = sum(F(p_n))
-            // p_temp = p_n + v_n * dt
-            // a_temp = sum(F(p_temp))
-            // v_n+1 = v_n + 0.5 * (a_n + a_temp) * dt
-            // p_n+1 = p_n + 0.5 * (v_n+1 + v_n) * dt
+            switch (intMethod)
+            {
+            case IntegrationMethod::Euler:
+               // Euler
+               // v_n+1 = v_n + sum(F)*dt
+               // p_n+1 = p_n + v_n+1 *dt
+               new_vel = body.Velocity() + force_agg*dt;
+               new_pos = body.Position() + new_vel*dt;
+               body.Acceleration(force_agg);
+               body.Velocity(new_vel);
+               body.Position(new_pos);
+               break;
+            case IntegrationMethod::Taylor:
+               // Taylor Series
+               // v_n+1 = v_n + sum(F)*dt
+               // p_n+1 = p_n + v_n+1 *dt + 0.5*sum(F)*dt*dt
+               new_vel = body.Velocity() + force_agg*dt;
+               new_pos = body.Position() + new_vel*dt + 0.5*force_agg*dt*dt;
+               body.Acceleration(force_agg);
+               body.Velocity(new_vel);
+               body.Position(new_pos);
+               break;
+            case IntegrationMethod::Leapfrog:
+               // Leapfrog
+               // v_n+0.5 = v_n + 0.5*dt*a(r_n)
+               // r_n+1 = r_n + dt*v_n+0.5
+               // v_n+1 = v_n+0.5 + 0.5*dt*a(r_n+1)
+               temp_vel = body.Velocity() + force_agg*dt;
+               new_pos = body.Position() + dt*0.5*temp_vel;
+               body.Position(new_pos);
+               new_force_agg = CalculateTotalForceOnBody(body);
+               new_vel = temp_vel + dt*0.5*new_force_agg;
+               body.Velocity(new_vel);
+               break;
+               // Improved Euler
+               // a_n = sum(F(p_n))
+               // p_temp = p_n + v_n * dt
+               // a_temp = sum(F(p_temp))
+               // v_n+1 = v_n + 0.5 * (a_n + a_temp) * dt
+               // p_n+1 = p_n + 0.5 * (v_n+1 + v_n) * dt
+            }
          }
       }
    }

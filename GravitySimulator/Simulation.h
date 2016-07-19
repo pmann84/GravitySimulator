@@ -37,7 +37,8 @@ public:
    enum IntegrationMethod
    {
       Euler,
-      Verlet
+      Taylor,
+      Leapfrog
    };
 
    void AddBody(double mass, double radius, bool isStatic = false);
@@ -57,6 +58,7 @@ public:
    void G(double massScale, double timeScale, double lengthScale);
    double Energy() const;
    CVector2 AngularMomentum() const;
+   CVector2 CSimulation::CalculateTotalForceOnBody(const CBody& body);
 
 private:
    double m_gravConst;
