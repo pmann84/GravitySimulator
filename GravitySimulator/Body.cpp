@@ -84,10 +84,25 @@ void CBody::Colour(const CVector3& rColour)
    m_vColour = rColour;
 }
 
+CVector2 CBody::DistVectToBody(const CBody& body)
+{
+   return body.Position() - Position();
+}
+
+double CBody::GravitationalPotential(const CBody& body, double G)
+{
+   return G*body.Mass()*Mass() / DistVectToBody(body).Norm();
+}
+
+double CBody::GravitationalForce(const CBody& body, double G)
+{
+   return GravitationalPotential(body, G) / DistVectToBody(body).Norm();
+}
+
 CVector2 CBody::ForceExertedBy(const CBody& body, double G)
 {
    auto distVector = body.Position() - Position();
-   auto distMag = distVector.Norm()*distVector.Norm()*distVector.Norm();
-   auto forceAdd = CVector2({ (G*body.Mass()*distVector[0]) / distMag, (G*body.Mass()*distVector[1]) / distMag });
+   distVector.Normalise();
+   auto forceAdd = GravitationalForce(body, G)*(1.0/Mass())*distVector;
    return forceAdd;
 }

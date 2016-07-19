@@ -40,6 +40,10 @@ public:
    bool Static() const { return m_bStatic; };
    void Static(bool s) { m_bStatic = s; };
 
+   CVector2 DistVectToBody(const CBody& body);
+
+   double GravitationalPotential(const CBody& body, double G);
+   double GravitationalForce(const CBody& body, double G);
    CVector2 ForceExertedBy(const CBody& body, double G);
 
    void operator=(const CBody& body)

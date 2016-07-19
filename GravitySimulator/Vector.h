@@ -68,6 +68,11 @@ public:
       return lhs *= rhs;
    }
 
+   friend CVector<TYPE, DIM> operator*(const TYPE& lhs, CVector rhs)
+   {
+      return rhs *= lhs;
+   }
+
    CVector<TYPE, DIM>& operator*=(const TYPE& rhs)
    {
       for (unsigned int i = 0; i < DIM; ++i)

@@ -173,12 +173,12 @@ void CSimulation::G(double g)
 
 void CSimulation::G(double massScale, double timeScale, double lengthScale)
 {
-   m_gravConst = (GCONST * massScale * timeScale * timeScale) / (lengthScale*lengthScale*lengthScale);
+   m_gravConst = (GCONST * massScale * timeScale * timeScale) / (lengthScale * lengthScale * lengthScale);
 }
 
 double CSimulation::Energy() const
 {
-   // E = 0.5 * sum{i=1..N}(m_i v_i^2) - sum{i=1..N}(sum{j=i..N}(Gm_im_j/|r_i - r_j|))
+   // E = 0.5 * sum{i=1..N}(m_i v_i^2) - sum{i=1..N}(sum{j!=i}(Gm_im_j/|r_i - r_j|))
    double energy = 0.0;
    for (auto& body : m_bodies)
    {
