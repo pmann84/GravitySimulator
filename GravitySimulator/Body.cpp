@@ -84,7 +84,7 @@ void CBody::Colour(const CVector3& rColour)
    m_vColour = rColour;
 }
 
-CVector2 CBody::DistVectToBody(const CBody& body)
+CVector2 CBody::DistVectToBody(const CBody& body) const
 {
    return body.Position() - Position();
 }
