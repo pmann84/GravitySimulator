@@ -200,7 +200,13 @@ double CSimulation::Energy() const
    {
       energy += 0.5*body.Mass()*body.Velocity().NormSquared(); // Kinetic energy
       // Get all bodies with 
-      //energy -= 
+      for (auto& potentialBody : m_bodies)
+      {
+         if (body.Id() != potentialBody.Id())
+         {
+            energy -= body.GravitationalPotential(potentialBody, m_gravConst);
+         }
+      }
    }
    return energy;
 }

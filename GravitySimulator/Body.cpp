@@ -89,17 +89,17 @@ CVector2 CBody::DistVectToBody(const CBody& body)
    return body.Position() - Position();
 }
 
-double CBody::GravitationalPotential(const CBody& body, double G)
+double CBody::GravitationalPotential(const CBody& body, double G) const
 {
    return G*body.Mass()*Mass() / DistVectToBody(body).Norm();
 }
 
-double CBody::GravitationalForce(const CBody& body, double G)
+double CBody::GravitationalForce(const CBody& body, double G) const
 {
    return GravitationalPotential(body, G) / DistVectToBody(body).Norm();
 }
 
-CVector2 CBody::ForceExertedBy(const CBody& body, double G)
+CVector2 CBody::ForceExertedBy(const CBody& body, double G) const
 {
    auto distVector = body.Position() - Position();
    distVector.Normalise();

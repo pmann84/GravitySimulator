@@ -42,9 +42,9 @@ public:
 
    CVector2 DistVectToBody(const CBody& body);
 
-   double GravitationalPotential(const CBody& body, double G);
-   double GravitationalForce(const CBody& body, double G);
-   CVector2 ForceExertedBy(const CBody& body, double G);
+   double GravitationalPotential(const CBody& body, double G) const;
+   double GravitationalForce(const CBody& body, double G) const;
+   CVector2 ForceExertedBy(const CBody& body, double G) const;
 
    void operator=(const CBody& body)
    {
