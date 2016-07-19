@@ -32,9 +32,10 @@ bool CText::Init()
 
 bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim)
 {
+   int fontSize = 12;
    sf::Text screenText;
    screenText.setFont(Font());
-   screenText.setCharacterSize(12);
+   screenText.setCharacterSize(fontSize);
 
    std::string windowStr = GetFrameRateString(fps);
    windowStr += AddNewline();
@@ -48,7 +49,24 @@ bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim)
 
    screenText.setString(windowStr);
    window.draw(screenText);
+
+   DrawInstructionsText(window);
    return true;
+}
+
+void CText::DrawInstructionsText(sf::RenderWindow& window)
+{
+   int fontSize = 12;
+   sf::Text screenText;
+   screenText.setFont(Font());
+   screenText.setCharacterSize(fontSize);
+
+   int instructionLines;
+   std::string windowStr = GetInstructionsString(instructionLines);
+
+   screenText.setString(windowStr);
+   screenText.setPosition(0, window.getSize().y - (instructionLines + 1) * fontSize);
+   window.draw(screenText);
 }
 
 std::string CText::GetFrameRateString(int fps) const
@@ -96,4 +114,10 @@ std::string CText::GetStringForValue(std::string text, double value) const
 std::string CText::AddNewline() const
 {
    return "\n";
+}
+
+std::string CText::GetInstructionsString(int& numLines)
+{
+   numLines = 4;
+   return "Controls\nR: Reset Simulation\nSpace: Pause/Unpause Simulation\nV: Toggle Draw Velocity Vectors";
 }

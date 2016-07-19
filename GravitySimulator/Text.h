@@ -19,6 +19,7 @@ public:
 
    bool Init();
    bool Draw(sf::RenderWindow& window, int fps, const CSimulation& sim);
+   void DrawInstructionsText(sf::RenderWindow& window);
 
 private:
    std::string m_fontPath;
@@ -32,6 +33,8 @@ private:
    std::string GetStringForValue(std::string text, int value) const;
    std::string GetStringForValue(std::string text, double value) const;
    std::string AddNewline() const;
+
+   std::string GetInstructionsString(int& numLines);
 };
 
 #endif

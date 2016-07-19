@@ -70,6 +70,9 @@ bool CMainWindow::Run()
             case sf::Keyboard::Space:
                m_sim.Pause();
                break;
+            case sf::Keyboard::V:
+               m_sim.DrawVelVectors();
+               break;
             }
          }
          //else if (event.type == sf::Event::MouseButtonPressed)

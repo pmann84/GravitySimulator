@@ -145,7 +145,18 @@ void CSimulation::Draw(sf::RenderWindow& window)
          shape.setPosition(static_cast<float>(screenCoords.x), static_cast<float>(screenCoords.y));
          // adjust for radius of circle
          shape.move(static_cast<float>(-b.Radius()), static_cast<float>(-b.Radius()));
-         
+
+         if (m_bDrawVelVectors)
+         {
+            // Draw velocity vectors
+            sf::VertexArray lines(sf::LinesStrip, 2);
+            lines[0].position = toSfVector2(b.Position(), window);
+            auto finalVelVectorPos = b.Position() + b.Velocity();
+            finalVelVectorPos.Normalise();
+            lines[1].position = toSfVector2(finalVelVectorPos, window);
+            window.draw(lines);
+         }
+
          window.draw(shape);
       }
    }
@@ -159,6 +170,11 @@ void CSimulation::Pause()
 bool CSimulation::IsPaused()
 {
    return m_bPaused;
+}
+
+void CSimulation::DrawVelVectors()
+{
+   m_bDrawVelVectors = !m_bDrawVelVectors;
 }
 
 double CSimulation::G() const

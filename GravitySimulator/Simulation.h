@@ -50,6 +50,7 @@ public:
    void Draw(sf::RenderWindow& window);
    void Pause();
    bool IsPaused();
+   void DrawVelVectors();
 
    double G() const;
    void G(double g);
@@ -60,6 +61,7 @@ public:
 private:
    double m_gravConst;
    bool m_bPaused;
+   bool m_bDrawVelVectors;
 
    std::vector<CBody> m_bodies;
    unsigned int m_nextId;
