@@ -1,9 +1,14 @@
 ﻿#ifndef __VECTOR_H__
 #define __VECTOR_H__
+
 #include <array>
+#include "math.h"
+
+#include "VectorExceptions.h"
 
 // TODO: Add specialisations for 2/3 dimensions - as vector product and triple product don't apply for higher dimensional vectors
 
+// Vector Template
 template<class TYPE, unsigned int DIM>
 class CVector
 {
@@ -21,6 +26,18 @@ public:
    }
 
    ~CVector() {};
+
+   // Basic Properties
+   int Size()
+   {
+      return m_data.size();
+   }
+
+   // Validation
+   int IsEqualLength(const CVector& vec)
+   {
+      return m_data.size() == vec.Size();
+   }
 
    // Random Access Operators
    TYPE& operator[] (unsigned int n)
@@ -155,8 +172,30 @@ public:
       }
    }
 
-   // TODO: Dot Product
-   // TODO: Cross Product
+   // Dot/Scalar Product a . b
+   friend TYPE DotProduct(const CVector<TYPE, DIM>& lhs, const CVector<TYPE, DIM>& rhs)
+   {
+      if (!lhs.IsEqualLength(rhs))
+      {
+         throw XVectorDimensionMismatch(lhs.Size(), rhs.Size());
+      }
+
+      TYPE result = static_cast<TYPE>(0);
+      for (int i = 0; i < lhs.Size(); ++i)
+      {
+         result += lhs[i] * rhs[i];
+      }
+      return result;
+   }
+
+   // Angle between two vectors (using dot product) - radians
+   friend TYPE AngleBetween(const CVector<TYPE, DIM>& lhs, const CVector<TYPE, DIM>& rhs)
+   {
+      // Validates size in DotProduct
+      return acos(DotProduct(lhs, rhs) / (lhs.Norm() * rhs.Norm()));
+   }
+
+   // TODO: Cross/Vector Product
    // TODO: Scalar triple product - a dot (b x c)
 
 private:
@@ -166,5 +205,6 @@ private:
 
 typedef CVector<double, 2> CVector2;
 typedef CVector<double, 3> CVector3;
+typedef CVector<double, 4> CVector4;
 
 #endif // __VECTOR_H__

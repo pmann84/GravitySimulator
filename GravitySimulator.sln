@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GravitySimulator", "GravitySimulator\GravitySimulator.vcxproj", "{751C5A53-C9DD-4210-9C78-B3A13CF1A2AC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGravitySimulator", "TestGravitySimulator\TestGravitySimulator.vcxproj", "{60F18772-DDC2-4CD4-A150-FBAB855D71E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{751C5A53-C9DD-4210-9C78-B3A13CF1A2AC}.Debug|Win32.Build.0 = Debug|Win32
 		{751C5A53-C9DD-4210-9C78-B3A13CF1A2AC}.Release|Win32.ActiveCfg = Release|Win32
 		{751C5A53-C9DD-4210-9C78-B3A13CF1A2AC}.Release|Win32.Build.0 = Release|Win32
+		{60F18772-DDC2-4CD4-A150-FBAB855D71E1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60F18772-DDC2-4CD4-A150-FBAB855D71E1}.Debug|Win32.Build.0 = Debug|Win32
+		{60F18772-DDC2-4CD4-A150-FBAB855D71E1}.Release|Win32.ActiveCfg = Release|Win32
+		{60F18772-DDC2-4CD4-A150-FBAB855D71E1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

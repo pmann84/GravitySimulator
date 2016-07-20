@@ -101,7 +101,7 @@ void CSimulation::Update()
             CVector2 new_vel, new_pos;
             CVector2 temp_vel;
 
-            dt = 0.01;
+            dt = 0.001;
 
             switch (intMethod)
             {
