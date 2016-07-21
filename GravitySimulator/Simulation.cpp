@@ -98,7 +98,7 @@ void CSimulation::Update()
             CVector2 new_vel, new_pos;
             CVector2 temp_vel, temp_pos;
 
-            dt = 0.01;
+            dt = 0.001;
 
             switch (intMethod)
             {
@@ -220,7 +220,7 @@ void CSimulation::G(double massScale, double timeScale, double lengthScale)
 
 double CSimulation::Energy() const
 {
-   // E = 0.5 * sum{i=1..N}(m_i v_i^2) - sum{i=1..N}(sum{j!=i}(Gm_im_j/|r_i - r_j|))
+   // E = 0.5 * sum{i=1..N}(m_i v_i^2) + sum{i=1..N}(sum{j!=i}(Gm_im_j/|r_i - r_j|))
    double energy = 0.0;
    for (auto& body : m_bodies)
    {
