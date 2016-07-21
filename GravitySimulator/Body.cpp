@@ -16,6 +16,7 @@ CBody::CBody(const CBody& body) :
             m_vInitialPosition(body.Position()),
             m_vVelocity(body.Velocity()), 
             m_vInitialVelocity(body.Velocity()),
+            m_vColour(body.Colour()),
             m_bStatic(body.Static())
 {
 }

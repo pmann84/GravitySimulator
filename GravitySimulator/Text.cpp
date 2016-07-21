@@ -65,7 +65,7 @@ void CText::DrawInstructionsText(sf::RenderWindow& window)
    std::string windowStr = GetInstructionsString(instructionLines);
 
    screenText.setString(windowStr);
-   screenText.setPosition(0, window.getSize().y - (instructionLines + 1) * fontSize);
+   screenText.setPosition(0,static_cast<float>(window.getSize().y - (instructionLines + 1) * fontSize));
    window.draw(screenText);
 }
 

@@ -2,7 +2,7 @@
 
 sf::Color sfmlutils::ToSfColor(CVector3 vector)
 {
-   return sf::Color(static_cast<int>(vector[0]), static_cast<int>(vector[1]), static_cast<int>(vector[2]));
+   return sf::Color(static_cast<sf::Uint8>(vector[0]), static_cast<sf::Uint8>(vector[1]), static_cast<sf::Uint8>(vector[2]));
 }
 
 CVector3 sfmlutils::ToVector3(sf::Color colour)

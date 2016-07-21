@@ -6,8 +6,6 @@
 
 #include "VectorExceptions.h"
 
-// TODO: Add specialisations for 2/3 dimensions - as vector product and triple product don't apply for higher dimensional vectors
-
 // Vector Template
 template<class TYPE, unsigned int DIM>
 class CVector
@@ -16,13 +14,18 @@ public:
 
    // Constructors & Destructors
    CVector() : m_data(std::array<TYPE, DIM>{0}) {};
+   CVector(const CVector<TYPE, DIM>& vector)
+   {
+      std::copy(vector.begin(), vector.end(), begin());
+   }
+
    CVector(std::initializer_list<TYPE> data)
    {
       if (data.size() > DIM)
       {
-         throw;
+         throw XVectorDimensionIncorrect(DIM, data.size());
       }
-      std::copy(data.begin(), data.end(), m_data.begin());
+      std::copy(data.begin(), data.end(), begin());
    }
 
    ~CVector() {};
@@ -48,6 +51,27 @@ public:
    const TYPE& operator[] (unsigned int n) const
    {
       return m_data[n];
+   }
+
+   // Iterators
+   typename std::array<TYPE, DIM>::iterator begin()
+   {
+      return m_data.begin();
+   }
+
+   typename std::array<TYPE, DIM>::const_iterator begin() const
+   {
+      return m_data.begin();
+   }
+
+   typename std::array<TYPE, DIM>::iterator end()
+   {
+      return m_data.end();
+   }
+
+   typename std::array<TYPE, DIM>::const_iterator end() const
+   {
+      return m_data.end();
    }
 
    // Arithmetic Operators
@@ -131,8 +155,15 @@ public:
 
    // TODO: Scalar multiplication
 
-   // Assignment operators
-   // TODO: Implement =
+   // Assignment operator
+   CVector<TYPE, DIM>& operator=(const CVector<TYPE, DIM>& other)
+   {
+      for (unsigned int i = 0; i < DIM; ++i)
+      {
+         m_data[i] = other[i];
+      }
+      return *this;
+   }
 
    // Comparison operators
    // TODO: Implement ==
@@ -195,8 +226,8 @@ public:
       return acos(DotProduct(lhs, rhs) / (lhs.Norm() * rhs.Norm()));
    }
 
-   // TODO: Cross/Vector Product
-   // TODO: Scalar triple product - a dot (b x c)
+   // TODO: Cross/Vector Product (2&3 dims only)
+   // TODO: Scalar triple product - a dot(b x c) (2&3 dims only)
 
 private:
    std::array<TYPE, DIM> m_data;

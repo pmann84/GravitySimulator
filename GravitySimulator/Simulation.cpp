@@ -94,14 +94,11 @@ void CSimulation::Update()
          // Only calculate new position if body is not statics
          if (!body.Static())
          {
-            // Loop over all the bodies again
-            force_agg = CalculateTotalForceOnBody(body);
-
             double dt;
             CVector2 new_vel, new_pos;
-            CVector2 temp_vel;
+            CVector2 temp_vel, temp_pos;
 
-            dt = 0.001;
+            dt = 0.01;
 
             switch (intMethod)
             {
@@ -109,6 +106,7 @@ void CSimulation::Update()
                // Euler
                // v_n+1 = v_n + sum(F)*dt
                // p_n+1 = p_n + v_n+1 *dt
+               force_agg = CalculateTotalForceOnBody(body);
                new_vel = body.Velocity() + force_agg*dt;
                new_pos = body.Position() + new_vel*dt;
                body.Acceleration(force_agg);
@@ -119,6 +117,7 @@ void CSimulation::Update()
                // Taylor Series
                // v_n+1 = v_n + sum(F)*dt
                // p_n+1 = p_n + v_n+1 *dt + 0.5*sum(F)*dt*dt
+               force_agg = CalculateTotalForceOnBody(body);
                new_vel = body.Velocity() + force_agg*dt;
                new_pos = body.Position() + new_vel*dt + 0.5*force_agg*dt*dt;
                body.Acceleration(force_agg);
@@ -127,15 +126,16 @@ void CSimulation::Update()
                break;
             case IntegrationMethod::Leapfrog:
                // Leapfrog
-               // v_n+0.5 = v_n + 0.5*dt*a(r_n)
-               // r_n+1 = r_n + dt*v_n+0.5
-               // v_n+1 = v_n+0.5 + 0.5*dt*a(r_n+1)
-               temp_vel = body.Velocity() + force_agg*dt;
-               new_pos = body.Position() + dt*0.5*temp_vel;
-               body.Position(new_pos);
-               new_force_agg = CalculateTotalForceOnBody(body);
-               new_vel = temp_vel + dt*0.5*new_force_agg;
+               // r_n+0.5 = r_n + 0.5*dt*v_n
+               // v_n+1 = v_n + dt*a(r_n+0.5)
+               // r_n+1 = r_n+0.5 + 0.5*dt*v_n+1
+               temp_pos = body.Position() + dt*0.5*body.Velocity();
+               body.Position(temp_pos);
+               force_agg = CalculateTotalForceOnBody(body);
+               new_vel = body.Velocity() + dt*force_agg;
+               new_pos = temp_pos + 0.5*dt*new_vel;
                body.Velocity(new_vel);
+               body.Position(new_pos);
                break;
                // Improved Euler
                // a_n = sum(F(p_n))
@@ -165,8 +165,7 @@ void CSimulation::Draw(sf::RenderWindow& window)
       for (auto b : m_bodies)
       {
          sf::CircleShape shape(static_cast<float>(b.Radius()));
-         //shape.setFillColor(sfmlutils::ToSfColor(b.Colour()));
-         shape.setFillColor(sf::Color::Yellow);
+         shape.setFillColor(sfmlutils::ToSfColor(b.Colour()));
          auto screenCoords = toSfVector2(b.Position(), window);
          // Draw at the centre
          shape.setPosition(static_cast<float>(screenCoords.x), static_cast<float>(screenCoords.y));
