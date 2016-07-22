@@ -243,15 +243,72 @@ CVector2 CSimulation::AngularMomentum() const
    return CVector2();
 }
 
+void GetTransformedPositions(double coord_x, double coord_y,
+                             double xmin1, double xmax1, double ymin1, double ymax1,
+                             double xmin2, double xmax2, double ymin2, double ymax2,
+                             double& new_coord_x, double& new_coord_y)
+{
+   // Get percentage of x & y in sim space
+   double x_percent = (coord_x - xmin1) / (xmax1 - xmin1);
+   double y_percent = (coord_y - ymin1) / (ymax1 - ymin1);
+
+   // Get values of same percent in screen space
+   new_coord_x = x_percent * abs(xmax2 - xmin2) + xmin2;
+   new_coord_y = y_percent * abs(ymax2 - ymin2) + ymin2;
+}
+
 sf::Vector2f CSimulation::toSfVector2(CVector2 coord, sf::RenderWindow& window)
 {
-   // Get conversion delta
-   double deltax = (m_simBounds.x_axis.Max - m_simBounds.x_axis.Min) / window.getSize().x;
-   double deltay = (m_simBounds.y_axis.Max - m_simBounds.y_axis.Min) / window.getSize().y;
-   // Convert sim space to screen space
-   double xpos = (coord[0] - m_simBounds.x_axis.Min) / deltax;
-   double ypos = (m_simBounds.y_axis.Max - coord[1]) / deltay;
+   // Get min max values
+   double screen_x_min = 0.0;
+   double screen_x_max = window.getSize().x;
+   double screen_y_min = 0.0;
+   double screen_y_max = window.getSize().y;
 
+   double sim_x_min = m_simBounds.x_axis.Min;
+   double sim_x_max = m_simBounds.x_axis.Max;
+   double sim_y_min = m_simBounds.y_axis.Min;
+   double sim_y_max = m_simBounds.y_axis.Max;
+
+   //// Normalise input
+   //coord.Normalise();
+
+   double xpos, ypos;
+   GetTransformedPositions(coord[0], coord[1],
+                           sim_x_min, sim_x_max, sim_y_min, sim_y_max,
+                           screen_x_min, screen_x_max, screen_y_min, screen_y_max,
+                           xpos, ypos);
+
+   // return in sf vector
    return sf::Vector2f(static_cast<float>(xpos),
                        static_cast<float>(ypos));
+}
+
+CVector2 CSimulation::fromSfVector2(sf::Vector2f coord, sf::RenderWindow& window)
+{
+   // Get min max values
+   double screen_x_min = 0.0;
+   double screen_x_max = window.getSize().x;
+   double screen_y_min = 0.0;
+   double screen_y_max = window.getSize().y;
+
+   double sim_x_min = m_simBounds.x_axis.Min;
+   double sim_x_max = m_simBounds.x_axis.Max;
+   double sim_y_min = m_simBounds.y_axis.Min;
+   double sim_y_max = m_simBounds.y_axis.Max;
+
+   //// Normalise input
+   //double mag = sqrt(coord.x*coord.x + coord.y*coord.y);
+   //auto norm_x = coord.x * (1.0 / mag);
+   //auto norm_y = coord.y * (1.0 / mag);
+
+   double xpos, ypos;
+   GetTransformedPositions(coord.x, coord.y,
+                           sim_x_min, sim_x_max, sim_y_min, sim_y_max,
+                           screen_x_min, screen_x_max, screen_y_min, screen_y_max,
+                           xpos, ypos);
+
+   // return in sf vector
+   return CVector2({ static_cast<float>(xpos),
+                     static_cast<float>(ypos) });
 }

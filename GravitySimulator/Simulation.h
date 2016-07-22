@@ -60,6 +60,9 @@ public:
    CVector2 AngularMomentum() const;
    CVector2 CSimulation::CalculateTotalForceOnBody(const CBody& body);
 
+   sf::Vector2f toSfVector2(CVector2 coord, sf::RenderWindow& window);
+   CVector2 fromSfVector2(sf::Vector2f coord, sf::RenderWindow& window);
+
 private:
    double m_gravConst;
    bool m_bPaused;
@@ -74,7 +77,6 @@ private:
    void SetSimBounds(double xMin, double xMax, double yMin, double yMax);
 
    void AddBody(CBody& body);
-   sf::Vector2f toSfVector2(CVector2 coord, sf::RenderWindow& window);
 };
 
 #endif
