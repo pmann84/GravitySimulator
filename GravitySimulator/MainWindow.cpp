@@ -75,27 +75,33 @@ bool CMainWindow::Run()
                break;
             }
          }
-         //else if (event.type == sf::Event::MouseButtonPressed)
-         //{
-         //   if (event.mouseButton.button == sf::Mouse::Left)
-         //   {
-         //      std::cout << "Init mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
-         //      m_vInitClickPos = CVector2({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
-         //   }
-         //}
-         //else if (event.type == sf::Event::MouseButtonReleased)
-         //{
-         //   if (event.mouseButton.button == sf::Mouse::Left)
-         //   {
-         //      CVector2 finalClickPos({ static_cast<double>(event.mouseButton.x), static_cast<double>(event.mouseButton.y) });
-         //      std::cout << "Final mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
-         //      CVector2 initVel = (finalClickPos - m_vInitClickPos);
-         //      std::cout << "Velocity (x, y) = (" << initVel[0] << ", " << initVel[1] << ")" << std::endl;
-         //      initVel.Normalise();
+         else if (event.type == sf::Event::MouseButtonPressed)
+         {
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+               std::cout << "Init mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+               m_vInitClickPos = sf::Vector2f({ static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) });
+            }
+         }
+         else if (event.type == sf::Event::MouseButtonReleased)
+         {
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+               sf::Vector2f finalClickPos({ static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) });
+               std::cout << "Final mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
+               sf::Vector2f initVel = (finalClickPos - m_vInitClickPos);
 
-         //      m_sim.AddBody(1.0, 1.0, m_vInitClickPos, initVel);
-         //   }
-         //}
+               std::cout << "Position (screen) (x, y) = (" << m_vInitClickPos.x << ", " << m_vInitClickPos.y << ")" << std::endl;
+               auto pos = m_sim.fromSfVector2(m_vInitClickPos, m_window);
+               std::cout << "Position (sim) (x, y) = (" << pos[0] << ", " << pos[1] << ")" << std::endl;
+
+               std::cout << "Velocity (screen) (x, y) = (" << initVel.x << ", " << initVel.y << ")" << std::endl;
+               auto velNorm = m_sim.fromSfVector2(initVel, m_window);
+               std::cout << "Velocity (sim) (x, y) = (" << velNorm[0] << ", " << velNorm[1] << ")" << std::endl;
+
+               m_sim.AddBody(0.0003, 1.0, pos, velNorm, CVector3({ 255.0, 255.0, 0.0 }));
+            }
+         }
          else if (event.type == sf::Event::Resized)
          {
             OnResize();

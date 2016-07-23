@@ -304,8 +304,8 @@ CVector2 CSimulation::fromSfVector2(sf::Vector2f coord, sf::RenderWindow& window
 
    double xpos, ypos;
    GetTransformedPositions(coord.x, coord.y,
-                           sim_x_min, sim_x_max, sim_y_min, sim_y_max,
                            screen_x_min, screen_x_max, screen_y_min, screen_y_max,
+                           sim_x_min, sim_x_max, sim_y_min, sim_y_max,
                            xpos, ypos);
 
    // return in sf vector

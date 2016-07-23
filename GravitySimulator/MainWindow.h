@@ -19,7 +19,7 @@ public:
    void SetupSim();
 
 private:
-   CVector2 m_vInitClickPos;
+   sf::Vector2f m_vInitClickPos;
 
    bool Draw();
    void OnResize();
