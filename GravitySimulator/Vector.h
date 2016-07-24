@@ -172,7 +172,20 @@ public:
    // Mathematical Validation functions
    // TODO: Implement Parallel check - opposite direction but not necessarily the same magnitude
    // TODO: Implement AntiParallel check - same direction but not necessarily the same magnitude
-   // TODO: Implement Opposite check - same magnitude but opposite direction
+
+   // Opposite check - same magnitude but opposite direction
+   bool IsOpposite(CVector<TYPE, DIM> vector)
+   {
+      bool validateMagnitude = Norm() == vector.Norm();
+      bool validateDirection = m_data[0] == -vector[0] && m_data[1] == -vector[1];
+      return validateMagnitude && validateDirection;
+   }
+
+   // Opposite
+   CVector<TYPE, DIM> Opposite()
+   {
+      return CVector<TYPE, DIM>({-m_data[0], -m_data[1]});
+   }
 
    // Mathematical vector operations
    TYPE NormSquared()
