@@ -61,6 +61,14 @@ void CSimulation::AddBody(double mass, double radius, CVector2 position, CVector
    AddBody(newBody);
 }
 
+void CSimulation::AddBodies(std::vector<CBody> bodies)
+{
+   for (auto& body : bodies)
+   {
+      AddBody(body);
+   }
+}
+
 int CSimulation::BodyCount() const
 {
    return m_bodies.size();

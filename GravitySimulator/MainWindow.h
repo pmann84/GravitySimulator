@@ -7,6 +7,24 @@
 #include "Fps.h"
 #include "Simulation.h"
 
+enum InsertMode
+{
+   Single,
+   RandomDisc
+};
+
+inline std::string InsertModeStr(InsertMode mode)
+{
+   switch (mode)
+   {
+   case Single:
+      return "Single";
+   case RandomDisc:
+      return "Random Disc";
+   }
+   return "";
+}
+
 class CMainWindow
 {
 public:
@@ -21,6 +39,9 @@ public:
 private:
    sf::Vector2f m_vInitClickPos;
    bool m_bIsLeftMousePressed;
+   double m_dMassInsertValue;
+   double m_dMassInsertIncrement;
+   InsertMode m_eInsertMode;
 
    bool Draw(sf::Event event);
    void OnResize();

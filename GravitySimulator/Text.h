@@ -18,7 +18,7 @@ public:
    sf::Font& Font();
 
    bool Init();
-   bool Draw(sf::RenderWindow& window, int fps, const CSimulation& sim);
+   bool Draw(sf::RenderWindow& window, int fps, const CSimulation& sim, double massInsert, std::string insMode);
    void DrawInstructionsText(sf::RenderWindow& window);
 
 private:
@@ -30,8 +30,11 @@ private:
    std::string GetGravConstValueString(double val) const;
    std::string GetSimTotalEnergyString(double val) const;
    std::string GetWindowResString(sf::RenderWindow& window) const;
+   std::string GetMassInsertString(double val) const;
+   std::string GetInsertModeString(std::string ins) const;
    std::string GetStringForValue(std::string text, int value) const;
    std::string GetStringForValue(std::string text, double value) const;
+   std::string GetStringForValue(std::string text, std::string value) const;
    std::string AddNewline() const;
 
    std::string GetInstructionsString(int& numLines);

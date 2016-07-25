@@ -45,6 +45,7 @@ public:
    void AddBody(double mass, double radius, CVector2 position, bool isStatic = false);
    void AddBody(double mass, double radius, CVector2 position, CVector2 velocity, bool isStatic = false);
    void AddBody(double mass, double radius, CVector2 position, CVector2 velocity, CVector3 colour, bool isStatic = false);
+   void AddBodies(std::vector<CBody> bodies);
    int BodyCount() const;
    void Update();
    void Reset();

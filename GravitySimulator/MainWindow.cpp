@@ -1,6 +1,6 @@
 ﻿#include "MainWindow.h"
 
-CMainWindow::CMainWindow()
+CMainWindow::CMainWindow() : m_dMassInsertValue(0.3), m_dMassInsertIncrement(0.1), m_eInsertMode(Single)
 {
 }
 
@@ -33,7 +33,7 @@ bool CMainWindow::Draw(sf::Event event)
    m_sim.Draw(m_window);
 
    int fps = m_fps.GetFps();
-   m_text.Draw(m_window, fps, m_sim);
+   m_text.Draw(m_window, fps, m_sim, m_dMassInsertValue, InsertModeStr(m_eInsertMode));
 
    if (m_bIsLeftMousePressed)
    {
@@ -113,6 +113,23 @@ bool CMainWindow::Run()
             case sf::Keyboard::V:
                m_sim.DrawVelVectors();
                break;
+            case sf::Keyboard::Add:
+               m_dMassInsertValue += m_dMassInsertIncrement;
+               break;
+            case sf::Keyboard::Subtract:
+               m_dMassInsertValue -= m_dMassInsertIncrement;
+               break;
+            case sf::Keyboard::M:
+               switch (m_eInsertMode)
+               {
+               case Single:
+                  m_eInsertMode = RandomDisc;
+                  break;
+               case RandomDisc:
+                  m_eInsertMode = Single;
+                  break;
+               }
+               break;
             }
          }
          else if (event.type == sf::Event::MouseButtonPressed)
@@ -135,8 +152,21 @@ bool CMainWindow::Run()
                vel *= 3.0;
                vel = vel.Opposite();
                std::cout << "New Body Velocity (x, y) = ( " << vel[0] << ", " << vel[1] << ")" << std::endl;
-               // Add body with calculated vel
-               m_sim.AddBody(0.0003, 1.0, pos, vel, CVector3({ 255.0, 255.0, 0.0 }));
+
+               switch (m_eInsertMode)
+               {
+               case Single:
+                  // Add body with calculated vel
+                  m_sim.AddBody(m_dMassInsertValue, 1.0, pos, vel, CVector3({ 255.0, 255.0, 0.0 }));
+                  break;
+               case RandomDisc:
+                  auto bodyPosns = sfmlutils::GenerateRandomPointsOnCircle(pos, vel.Norm(), 100);
+                  for (auto p : bodyPosns)
+                  {
+                     m_sim.AddBody(0.00003, 1.0, p, CVector2({ 0.0, 0.0 }), CVector3({ 255.0, 255.0, 0.0 }));
+                  }
+                  break;
+               }
                m_bIsLeftMousePressed = false;
             }
          }

@@ -30,7 +30,7 @@ bool CText::Init()
    return true;
 }
 
-bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim)
+bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim, double massInsert, std::string insMode)
 {
    int fontSize = 12;
    sf::Text screenText;
@@ -46,6 +46,10 @@ bool CText::Draw(sf::RenderWindow& window, int fps, const CSimulation& sim)
    windowStr += GetGravConstValueString(sim.G());
    windowStr += AddNewline();
    windowStr += GetSimTotalEnergyString(sim.Energy());
+   windowStr += AddNewline();
+   windowStr += GetMassInsertString(massInsert);
+   windowStr += AddNewline();
+   windowStr += GetInsertModeString(insMode);
 
    screenText.setString(windowStr);
    window.draw(screenText);
@@ -97,6 +101,16 @@ std::string CText::GetWindowResString(sf::RenderWindow& window) const
    return ss.str();
 }
 
+std::string CText::GetMassInsertString(double val) const
+{
+   return GetStringForValue("Mass Insert: ", val);
+}
+
+std::string CText::GetInsertModeString(std::string ins) const
+{
+   return GetStringForValue("Insert Mode: ", ins);
+}
+
 std::string CText::GetStringForValue(std::string text, int value) const
 {
    std::stringstream ss;
@@ -108,6 +122,13 @@ std::string CText::GetStringForValue(std::string text, double value) const
 {
    std::stringstream ss;
    ss << text << std::to_string(value);
+   return ss.str();
+}
+
+std::string CText::GetStringForValue(std::string text, std::string value) const
+{
+   std::stringstream ss;
+   ss << text << value;
    return ss.str();
 }
 
