@@ -27,7 +27,7 @@ bool CMainWindow::Init()
    return true;
 }
 
-bool CMainWindow::Draw()
+bool CMainWindow::Draw(sf::Event event)
 {
    m_window.clear(sf::Color::Black);
    m_sim.Draw(m_window);
@@ -35,9 +35,25 @@ bool CMainWindow::Draw()
    int fps = m_fps.GetFps();
    m_text.Draw(m_window, fps, m_sim);
 
+   if (m_bIsLeftMousePressed)
+   {
+      DrawVelocityVector(event, m_window);
+   }
+
    m_window.setView(m_view);
    m_window.display();
    return true;
+}
+
+void CMainWindow::DrawVelocityVector(sf::Event event, sf::RenderWindow& window)
+{
+   sf::Vector2f initVel = GetScreenVelocityFromInitClick(event);
+   // Draw velocity vectors
+   sf::VertexArray lines(sf::LinesStrip, 2);
+   lines[0].position = m_vInitClickPos;
+   auto finalVelVectorPos = m_vInitClickPos - initVel;
+   lines[1].position = finalVelVectorPos;
+   window.draw(lines);
 }
 
 void CMainWindow::OnResize()
@@ -48,6 +64,30 @@ void CMainWindow::OnResize()
                                    static_cast<float>(size.x), 
                                    static_cast<float>(size.y)));
 }
+
+sf::Vector2f CMainWindow::GetCurrentClickPosition(sf::Event event)
+{
+   if (event.type == sf::Event::MouseMoved)
+   {
+      return sf::Vector2f({ static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y) });
+   }
+   return sf::Vector2f({ static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) });
+}
+
+sf::Vector2f CMainWindow::GetScreenVelocityFromInitClick(sf::Event event)
+{
+   sf::Vector2f currClickPos = GetCurrentClickPosition(event);
+   return currClickPos - m_vInitClickPos;
+}
+
+CVector2 CMainWindow::GetSimVelocityFromInitClick(sf::Event event)
+{
+   sf::Vector2f currClickPos = GetCurrentClickPosition(event);
+   auto currSim = m_sim.fromSfVector2(currClickPos, m_window);
+   auto initSim = m_sim.fromSfVector2(m_vInitClickPos, m_window);
+   return currSim - initSim;
+}
+
 
 bool CMainWindow::Run()
 {
@@ -79,27 +119,25 @@ bool CMainWindow::Run()
          {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
-               std::cout << "Init mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
                m_vInitClickPos = sf::Vector2f({ static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) });
+               m_bIsLeftMousePressed = true;
             }
          }
          else if (event.type == sf::Event::MouseButtonReleased)
          {
             if (event.mouseButton.button == sf::Mouse::Left)
             {
-               sf::Vector2f finalClickPos({ static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y) });
-               std::cout << "Final mouse coordinates (x, y) = (" << event.mouseButton.x << ", " << event.mouseButton.y << ")" << std::endl;
-               sf::Vector2f initVel = (finalClickPos - m_vInitClickPos);
-
-               std::cout << "Position (screen) (x, y) = (" << m_vInitClickPos.x << ", " << m_vInitClickPos.y << ")" << std::endl;
+               // Get the sim position for new body 
                auto pos = m_sim.fromSfVector2(m_vInitClickPos, m_window);
-               std::cout << "Position (sim) (x, y) = (" << pos[0] << ", " << pos[1] << ")" << std::endl;
-
-               std::cout << "Velocity (screen) (x, y) = (" << initVel.x << ", " << initVel.y << ")" << std::endl;
-               auto velNorm = m_sim.fromSfVector2(initVel, m_window);
-               std::cout << "Velocity (sim) (x, y) = (" << velNorm[0] << ", " << velNorm[1] << ")" << std::endl;
-
-               m_sim.AddBody(0.0003, 1.0, pos, velNorm, CVector3({ 255.0, 255.0, 0.0 }));
+               std::cout << "New Body Position (x, y) = ( " << pos[0] << ", " << pos[1] << ")" << std::endl;
+               // Get the sim velocity for the new body
+               CVector2 vel = GetSimVelocityFromInitClick(event);
+               vel *= 3.0;
+               vel = vel.Opposite();
+               std::cout << "New Body Velocity (x, y) = ( " << vel[0] << ", " << vel[1] << ")" << std::endl;
+               // Add body with calculated vel
+               m_sim.AddBody(0.0003, 1.0, pos, vel, CVector3({ 255.0, 255.0, 0.0 }));
+               m_bIsLeftMousePressed = false;
             }
          }
          else if (event.type == sf::Event::Resized)
@@ -110,7 +148,7 @@ bool CMainWindow::Run()
       if (!m_sim.IsPaused())
       {
          m_sim.Update();
-         Draw();
+         Draw(event);
       }
    }
    return true;

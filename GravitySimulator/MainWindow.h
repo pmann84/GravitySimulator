@@ -20,9 +20,14 @@ public:
 
 private:
    sf::Vector2f m_vInitClickPos;
+   bool m_bIsLeftMousePressed;
 
-   bool Draw();
+   bool Draw(sf::Event event);
    void OnResize();
+   void DrawVelocityVector(sf::Event event, sf::RenderWindow& window);
+   sf::Vector2f GetCurrentClickPosition(sf::Event event);
+   sf::Vector2f GetScreenVelocityFromInitClick(sf::Event event);
+   CVector2 GetSimVelocityFromInitClick(sf::Event event);
 
    sf::RenderWindow m_window;
    sf::View m_view;
