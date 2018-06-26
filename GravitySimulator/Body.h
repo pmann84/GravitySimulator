@@ -44,6 +44,9 @@ public:
 
    double GravitationalPotential(const CBody& body, double G) const;
    double GravitationalForce(const CBody& body, double G) const;
+   double GravitationalForce(CVector2& distBetweenBodies, float bodyMass, double G) const;
+   double SoftenedGravitationalForce(const CBody& body, double G, double softening) const;
+   double SoftenedGravitationalForce(CVector2& distBetweenBodies, float bodyMass, double G, double softening) const;
    CVector2 ForceExertedBy(const CBody& body, double G) const;
 
    void operator=(const CBody& body)

@@ -97,13 +97,38 @@ double CBody::GravitationalPotential(const CBody& body, double G) const
 
 double CBody::GravitationalForce(const CBody& body, double G) const
 {
-   return GravitationalPotential(body, G) / DistVectToBody(body).Norm();
+	auto normalisedDistToBody = DistVectToBody(body).Norm();
+    return (G*body.Mass()*Mass()) / (normalisedDistToBody*normalisedDistToBody);
+}
+
+double CBody::GravitationalForce(CVector2& distBetweenBodies, float bodyMass, double G) const
+{
+	auto normalisedDistToBody = distBetweenBodies.Norm();
+	return (G*bodyMass*Mass()) / (normalisedDistToBody*normalisedDistToBody);
+}
+
+double CBody::SoftenedGravitationalForce(const CBody& body, double G, double softening) const
+{
+	auto normalisedDistToBody = DistVectToBody(body).Norm();
+	double denom = std::pow((normalisedDistToBody*normalisedDistToBody - softening*softening), 1.5);
+	return (G*body.Mass()*Mass()) / denom;
+}
+
+double CBody::SoftenedGravitationalForce(CVector2& distBetweenBodies, float bodyMass, double G, double softening) const
+{
+	auto normalisedDistToBody = distBetweenBodies.Norm();
+	double denom = std::pow((normalisedDistToBody*normalisedDistToBody - softening*softening), 1.5);
+	return (G*bodyMass*Mass()) / denom;
 }
 
 CVector2 CBody::ForceExertedBy(const CBody& body, double G) const
 {
-   auto distVector = body.Position() - Position();
+   // MINIMISE CALL TO DistVectToBody - the calculation of distance takes aaaaages, so reduce this
+	auto suppliedBodyPos = body.Position();
+	auto currentBodyPos = Position();
+   auto distVector = suppliedBodyPos - currentBodyPos; // THIS LINE IS SLOOOOOOOOW
    distVector.Normalise();
-   auto forceAdd = GravitationalForce(body, G)*(1.0/Mass())*distVector;
+   auto forceAdd = SoftenedGravitationalForce(distVector, body.Mass(), G, 0.01)*(1.0/Mass())*distVector; // THIS LINE IS SLOOOOOOOOOW
+   //auto forceAdd = GravitationalForce(distVector, body.Mass(), G)*(1.0 / Mass())*distVector; // THIS LINE IS SLOOOOOOOOOW
    return forceAdd;
 }
