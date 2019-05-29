@@ -12,3 +12,4 @@
 *.opendb
 *.db
 *.opensdf
+.vs
